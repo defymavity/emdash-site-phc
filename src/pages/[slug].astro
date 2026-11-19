@@ -1,41 +1,85 @@
 ---
-import { getEmDashEntry, getSeoMeta, decodeSlug, getSiteSettings } from "emdash";
+import { getEmDashCollection, getEmDashEntry, getSeoMeta, decodeSlug, getSiteSettings } from "emdash";
 import { PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
-import { resolveStarterSiteIdentity } from "../utils/site-identity";
 
 const slug = decodeSlug(Astro.params.slug);
-
-if (!slug) {
-	return Astro.rewrite("/404");
-}
+if (!slug) return Astro.rewrite("/404");
 
 const { entry: page, cacheHint } = await getEmDashEntry("pages", slug);
+if (!page) return Astro.rewrite("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-if (!page) {
-	return Astro.rewrite("/404");
+const settings = await getSiteSettings();
+const seo = getSeoMeta(page, {
+  siteTitle: settings?.title ?? "Prairie Homebrewing Companions",
+  siteUrl: Astro.url.origin,
+  path: Astro.url.pathname.replace(/\/$/, ""),
+});
+
+// The page with the slug "events" also lists every upcoming event from Admin > Events
+const isEventsPage = slug === "events";
+let events: any[] = [];
+if (isEventsPage) {
+  const { entries } = await getEmDashCollection("events", {
+    status: "published",
+    orderBy: { event_date: "asc" },
+    limit: 100,
+  });
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  events = entries.filter((e) => e.data.event_date && new Date(e.data.event_date) >= startOfToday);
 }
 
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-const { siteTitle } = resolveStarterSiteIdentity(await getSiteSettings());
-
-const seo = getSeoMeta(page, {
-	siteTitle,
-	siteUrl: Astro.url.origin,
-	path: Astro.url.pathname.replace(/\/$/, ""),
-});
+const tz = "America/Chicago";
+const mon = (d: Date) => new Date(d).toLocaleDateString("en-US", { month: "short", timeZone: tz }).toUpperCase();
+const day = (d: Date) => new Date(d).toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+const fullDate = (d: Date) => new Date(d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: tz });
+const display = "font-family:'Montserrat',system-ui,sans-serif;font-weight:700";
 ---
-
 <Base
-	title={seo.title}
-	pageTitle={seo.ogTitle}
-	description={seo.description}
-	canonical={seo.canonical}
-	content={{ collection: "pages", id: page.data.id, slug }}
+  title={seo.title}
+  pageTitle={seo.ogTitle}
+  description={seo.description}
+  canonical={seo.canonical}
+  content={{ collection: "pages", id: page.data.id, slug }}
 >
-	<article>
-		<h1 {...page.edit.title}>{page.data.title}</h1>
+  <!-- PAGE HEADER -->
+  <section style="position:relative;width:100%;box-sizing:border-box;background:#183D34;color:#F4EEDD;padding:48px 24px 72px;overflow:hidden">
+    <div class="patLine" aria-hidden="true" style="position:absolute;inset:0;opacity:0.35"></div>
+    <div style="position:relative;max-width:1200px;margin:0 auto">
+      <h1 {...page.edit.title} style={`margin:0;${display};font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-0.03em;text-wrap:balance`}>{page.data.title}</h1>
+    </div>
+  </section>
 
-		<PortableText value={page.data.content} />
-	</article>
+  <!-- PAGE CONTENT -->
+  <section style="width:100%;box-sizing:border-box;padding:72px 24px 96px">
+    <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:56px">
+      {page.data.content && page.data.content.length > 0 && (
+        <article class="phc-content">
+          <PortableText value={page.data.content} />
+        </article>
+      )}
+
+      {isEventsPage && (
+        <div style="display:flex;flex-direction:column;max-width:900px">
+          {events.length === 0 && <p style="margin:0;padding:22px 0;border-top:2px solid #183D34;border-bottom:2px solid #183D34;font-size:18px;color:#4B5E57">New events are on the way. Check back soon!</p>}
+          {events.map((ev, i) => (
+            <div id={ev.id} style={`display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 24px;padding:28px 0;border-top:2px solid #183D34;${i === events.length - 1 ? "border-bottom:2px solid #183D34;" : ""}`}>
+              <div style={`flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;box-sizing:border-box;border-radius:14px;${display};line-height:1;${i === 0 ? "background:#BF9D5E" : "border:2px solid #183D34;background:#FBF8EF"}`}>
+                <span style="font-size:14px;letter-spacing:0.08em">{mon(ev.data.event_date)}</span>
+                <span style="font-size:30px;margin-top:4px">{day(ev.data.event_date)}</span>
+              </div>
+              <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">
+                <h2 style={`margin:0;${display};font-size:24px;line-height:1.2`}>{ev.data.title}</h2>
+                <span style="font-size:16px;font-weight:600;color:#4B5E57">{[fullDate(ev.data.event_date), ev.data.time_label, ev.data.location].filter(Boolean).join(" · ")}</span>
+                {ev.data.summary && <p style="margin:6px 0 0;font-size:18px;text-wrap:pretty">{ev.data.summary}</p>}
+                {ev.data.details_url && <a href={ev.data.details_url} style="display:inline-flex;align-items:center;gap:10px;margin-top:8px;font-weight:700;font-size:16px">More details <span class="arrow" aria-hidden="true">→</span></a>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
 </Base>

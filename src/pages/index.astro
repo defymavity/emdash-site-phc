@@ -1,38 +1,175 @@
 ---
-import { getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
-import { PortableText } from "emdash/ui";
+import { getEmDashCollection, getEmDashEntry } from "emdash";
 import Base from "../layouts/Base.astro";
-import { resolveStarterSiteIdentity } from "../utils/site-identity";
 
-const slug = "home";
+// Homepage text comes from Admin > Homepage > "home"
+const { entry } = await getEmDashEntry("homepage", "home");
+const h: Record<string, any> = entry?.data ?? {};
 
-const { entry: page, cacheHint } = await getEmDashEntry("pages", slug);
-
-if (!page) {
-	return Astro.rewrite("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const { siteTitle } = resolveStarterSiteIdentity(await getSiteSettings());
-
-const seo = getSeoMeta(page, {
-	siteTitle,
-	siteUrl: Astro.url.origin,
-	path: "",
+// Next 3 upcoming events from Admin > Events
+const { entries: allEvents } = await getEmDashCollection("events", {
+  status: "published",
+  orderBy: { event_date: "asc" },
+  limit: 50,
 });
+const startOfToday = new Date();
+startOfToday.setHours(0, 0, 0, 0);
+const events = allEvents
+  .filter((e) => e.data.event_date && new Date(e.data.event_date) >= startOfToday)
+  .slice(0, 3);
+
+const tz = "America/Chicago";
+const mon = (d: Date) => new Date(d).toLocaleDateString("en-US", { month: "short", timeZone: tz }).toUpperCase();
+const day = (d: Date) => new Date(d).toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+
+const headlineLines = String(h.hero_headline ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+const tags = String(h.card3_tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+const perks: { text: string }[] = Array.isArray(h.join_perks) ? h.join_perks : [];
+
+const eyebrow = "margin:0;font-weight:700;font-size:14px;letter-spacing:0.16em;text-transform:uppercase;color:#4B5E57";
+const display = "font-family:'Montserrat',system-ui,sans-serif;font-weight:700";
 ---
+<Base>
 
-<Base
-	title={seo.title}
-	pageTitle={seo.ogTitle}
-	description={seo.description}
-	canonical={seo.canonical}
-	content={{ collection: "pages", id: page.data.id, slug }}
->
-	<article>
-		<h1 {...page.edit.title}>{page.data.title}</h1>
+  <!-- HERO -->
+  <section id="top" style="position:relative;width:100%;box-sizing:border-box;background:#183D34;color:#F4EEDD;padding:0 24px 96px">
+    <div aria-hidden="true" style="position:absolute;inset:0;display:flex;align-items:center;pointer-events:none"><div class="bandLine"></div></div>
+    <div style="position:relative;max-width:1200px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:56px;align-items:center;padding-top:40px">
+        <div style="display:flex;flex-direction:column;gap:28px">
+          {h.hero_eyebrow && <p style="margin:0;font-weight:700;font-size:14px;letter-spacing:0.16em;text-transform:uppercase;color:#BF9D5E">{h.hero_eyebrow}</p>}
+          <h1 style={`margin:0;${display};font-size:clamp(36px,4.6vw,60px);line-height:1.04;letter-spacing:-0.03em;text-wrap:balance`}>
+            {headlineLines.map((line) => <Fragment>{line}<br></Fragment>)}
+            {h.hero_highlight && <span style="color:#BF9D5E">{h.hero_highlight}</span>}
+          </h1>
+          {h.hero_intro && <p style="margin:0;max-width:520px;font-size:20px;color:#D5E0D8;text-wrap:pretty">{h.hero_intro}</p>}
+          <div style="display:flex;flex-wrap:wrap;gap:14px">
+            {h.hero_button_label && <a class="btn" href={h.hero_button_url || "#"} style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 30px;border-radius:999px;background:#BF9D5E;color:#183D34;font-weight:700;font-size:18px">{h.hero_button_label} <span class="arrow" aria-hidden="true">→</span></a>}
+            {h.hero_button2_label && <a class="btn" href={h.hero_button2_url || "#"} style="display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;border-radius:999px;border:2px solid #F4EEDD;font-weight:700;font-size:18px">{h.hero_button2_label}</a>}
+          </div>
+        </div>
+        <div style="position:relative;width:100%;max-width:480px;margin:0 auto">
+          <img src="/images/logo.png" alt="Prairie Homebrewing Companions badge: a wheat ear and a brewing paddle" width="480" height="480" style="display:block;width:100%;height:auto">
+        </div>
+      </div>
+    </div>
+  </section>
 
-		<PortableText value={page.data.content} />
-	</article>
+  <!-- WELCOME STATEMENT -->
+  <section aria-label="Welcome" style="width:100%;box-sizing:border-box;background:#BF9D5E;color:#183D34;padding:clamp(56px,8vw,96px) 24px">
+    <div style="max-width:780px;margin:0 auto;text-align:center">
+      <p style="margin:0;font-size:clamp(18px,1.8vw,21px);line-height:1.65;font-weight:500;text-wrap:pretty">{h.welcome_bold && <span style="font-weight:700">{h.welcome_bold}</span>} {h.welcome_text}</p>
+    </div>
+  </section>
+
+  <!-- THREE THINGS -->
+  <section id="about" style="width:100%;box-sizing:border-box;padding:104px 24px 96px">
+    <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+        {h.about_eyebrow && <p style={eyebrow}>{h.about_eyebrow}</p>}
+        <h2 style={`margin:0;${display};font-size:clamp(30px,3.8vw,46px);line-height:1.1;letter-spacing:-0.025em;text-wrap:balance`}>{h.about_heading}</h2>
+      </div>
+
+      <div class="cols3">
+
+        <a class="card" href={h.card1_link_url || "#"} style="display:flex;flex-direction:column;gap:20px;justify-content:space-between;box-sizing:border-box;padding:clamp(24px,2.6vw,36px);border-radius:24px;background:#183D34;color:#F4EEDD;min-height:380px">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="#BF9D5E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18h26v24a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z"></path><path d="M36 24h6a5 5 0 0 1 0 14h-6"></path><path d="M18 6v6M28 6v6"></path></svg>
+            <h3 style={`margin:0;${display};font-size:28px;line-height:1.1;letter-spacing:-0.02em`}>{h.card1_title}</h3>
+            <p style="margin:0;font-size:18px;color:#D5E0D8;text-wrap:pretty">{h.card1_text}</p>
+          </div>
+          {h.card1_link_label && <span style="display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:#BF9D5E">{h.card1_link_label} <span class="arrow" aria-hidden="true">→</span></span>}
+        </a>
+
+        <a class="card" id="award" href={h.card2_link_url || "#"} style="display:flex;flex-direction:column;gap:20px;justify-content:space-between;box-sizing:border-box;padding:clamp(24px,2.6vw,36px);border-radius:24px;background:#BF9D5E;color:#183D34;min-height:380px">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="#183D34" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="28" cy="22" r="14"></circle><path d="M20 34l-4 16 12-6 12 6-4-16"></path><path d="M28 14l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8z"></path></svg>
+            <h3 style={`margin:0;${display};font-size:28px;line-height:1.1;letter-spacing:-0.02em`}>{h.card2_title}</h3>
+            <p style="margin:0;font-size:18px;color:#183D34;text-wrap:pretty">{h.card2_text}</p>
+          </div>
+          {h.card2_link_label && <span style="display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:17px">{h.card2_link_label} <span class="arrow" aria-hidden="true">→</span></span>}
+        </a>
+
+        <a class="card" id="resources" href={h.card3_link_url || "#"} style="display:flex;flex-direction:column;gap:20px;justify-content:space-between;box-sizing:border-box;padding:clamp(24px,2.6vw,36px);border-radius:24px;background:#FBF8EF;border:2px solid #183D34;min-height:380px">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <svg width="52" height="52" viewBox="0 0 56 56" fill="none" stroke="#183D34" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="10" width="26" height="38" rx="6"></rect><path d="M12 22h26M12 36h26"></path><path d="M38 28h8M46 24v8"></path></svg>
+            <h3 style={`margin:0;${display};font-size:28px;line-height:1.1;letter-spacing:-0.02em`}>{h.card3_title}</h3>
+            <p style="margin:0;font-size:18px;color:#34493F;text-wrap:pretty">{h.card3_text}</p>
+            {tags.length > 0 && (
+              <ul style="margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px">
+                {tags.map((t) => <li style="padding:6px 14px;border-radius:999px;background:#EBDDB9;font-weight:600;font-size:15px">{t}</li>)}
+              </ul>
+            )}
+          </div>
+          {h.card3_link_label && <span style="display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:17px">{h.card3_link_label} <span class="arrow" aria-hidden="true">→</span></span>}
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS + FEATURE CARD -->
+  <section id="events" style="width:100%;box-sizing:border-box;padding:0 24px 104px">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));gap:48px 64px;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          {h.events_eyebrow && <p style={eyebrow}>{h.events_eyebrow}</p>}
+          <h2 style={`margin:0;${display};font-size:clamp(30px,3.6vw,42px);line-height:1.1;letter-spacing:-0.025em`}>{h.events_heading}</h2>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          {events.length === 0 && <p style="margin:0;padding:22px 0;border-top:2px solid #183D34;border-bottom:2px solid #183D34;font-size:18px;color:#4B5E57">{h.events_empty}</p>}
+          {events.map((ev, i) => (
+            <a href={ev.data.details_url || h.events_all_url || "#events"} style={`display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:22px 0;border-top:2px solid #183D34;${i === events.length - 1 ? "border-bottom:2px solid #183D34;" : ""}`}>
+              <div style={`display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:76px;box-sizing:border-box;border-radius:14px;${display};line-height:1;${i === 0 ? "background:#BF9D5E" : "border:2px solid #183D34;background:#FBF8EF"}`}>
+                <span style="font-size:13px;letter-spacing:0.08em">{mon(ev.data.event_date)}</span>
+                <span style="font-size:26px;margin-top:4px">{day(ev.data.event_date)}</span>
+              </div>
+              <div style="flex:1 1 200px;display:flex;flex-direction:column;gap:2px">
+                <span style={`${display};font-size:21px;line-height:1.2`}>{ev.data.title}</span>
+                <span style="font-size:16px;color:#4B5E57">{[ev.data.time_label, ev.data.location].filter(Boolean).join(" · ")}</span>
+              </div>
+              <span style="font-weight:700;font-size:16px">Details <span class="arrow" aria-hidden="true">→</span></span>
+            </a>
+          ))}
+        </div>
+        {h.events_all_label && <a href={h.events_all_url || "#events"} style="display:inline-flex;align-items:center;gap:10px;min-height:44px;font-weight:700;font-size:17px">{h.events_all_label} <span class="arrow" aria-hidden="true">→</span></a>}
+      </div>
+
+      <a class="card" id="halloween" href={h.feature_link_url || "#"} style="position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:28px;box-sizing:border-box;padding:40px;border-radius:24px;background:#BF9D5E;color:#183D34;min-height:440px">
+        <div class="patGreen" aria-hidden="true" style="position:absolute;inset:0;opacity:0.22"></div>
+        <div style="position:relative;display:flex;flex-direction:column;gap:18px">
+          {h.feature_badge && <span style="align-self:flex-start;padding:6px 14px;border-radius:999px;background:#183D34;color:#F4EEDD;font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase">{h.feature_badge}</span>}
+          <h3 style={`margin:0;${display};font-size:clamp(32px,4vw,48px);line-height:1.04;letter-spacing:-0.03em`}>{h.feature_title}</h3>
+          {h.feature_text && <p style="margin:0;font-size:19px;text-wrap:pretty">{h.feature_text}</p>}
+        </div>
+        {h.feature_link_label && <span style="position:relative;display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:17px">{h.feature_link_label} <span class="arrow" aria-hidden="true">→</span></span>}
+      </a>
+
+    </div>
+  </section>
+
+  <!-- JOIN -->
+  <section id="join" style="width:100%;box-sizing:border-box;padding:0 24px 104px">
+    <div style="position:relative;overflow:hidden;max-width:1200px;margin:0 auto;box-sizing:border-box;padding:clamp(32px,6vw,72px);border-radius:28px;background:#183D34;color:#F4EEDD;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:40px;align-items:center">
+      <div class="patLine" aria-hidden="true" style="position:absolute;inset:0"></div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:24px">
+        <h2 style={`margin:0;${display};font-size:clamp(30px,4vw,52px);line-height:1.05;letter-spacing:-0.03em;text-wrap:balance`}>{h.join_heading} {h.join_highlight && <span style="color:#BF9D5E">{h.join_highlight}</span>}</h2>
+        {h.join_text && <p style="margin:0;font-size:20px;max-width:520px;color:#D5E0D8;text-wrap:pretty">{h.join_text}</p>}
+        {h.join_button_label && (
+          <div style="display:flex;flex-wrap:wrap;gap:14px">
+            <a class="btn" href={h.join_button_url || "#"} style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 30px;border-radius:999px;background:#BF9D5E;color:#183D34;font-weight:700;font-size:18px">{h.join_button_label} <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        )}
+      </div>
+      {perks.length > 0 && (
+        <ul style="position:relative;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px">
+          {perks.map((p) => (
+            <li style={`display:flex;align-items:center;gap:16px;padding:18px 22px;border-radius:16px;background:#F4EEDD;color:#183D34;font-family:'Montserrat',system-ui,sans-serif;font-weight:600;font-size:18px;line-height:1.3`}><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#183D34" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M5 14l6 6 12-12"></path></svg>{p.text}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
 </Base>

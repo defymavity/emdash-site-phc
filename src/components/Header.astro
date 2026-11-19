@@ -1,0 +1,25 @@
+---
+import { getMenu, getSiteSettings } from "emdash";
+
+const [settings, primary, cta] = await Promise.all([
+  getSiteSettings(),
+  getMenu("primary"),
+  getMenu("header_cta"),
+]);
+---
+<div style="width:100%;box-sizing:border-box;background:#183D34;color:#F4EEDD;padding:0 24px">
+  <header style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:20px 0">
+    <a href="/" style="display:flex;align-items:center;gap:12px;min-height:44px">
+      <img src="/images/logo.png" alt={`${settings.title} logo`} width="56" height="56" style="display:block;width:56px;height:56px">
+      <span style="max-width:200px;font-family:'Montserrat',system-ui,sans-serif;font-weight:700;font-size:16px;line-height:1.15;letter-spacing:0.02em;text-transform:uppercase">{settings.title}</span>
+    </a>
+    <nav aria-label="Main" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px">
+      {primary?.items.map((item) => (
+        <a class="navlink" href={item.url} style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;font-weight:500;font-size:16px">{item.label}</a>
+      ))}
+      {cta?.items.map((item) => (
+        <a class="btn" href={item.url} style="display:inline-flex;align-items:center;min-height:44px;padding:0 22px;margin-left:8px;border-radius:999px;background:#BF9D5E;color:#183D34;font-weight:700;font-size:16px">{item.label}</a>
+      ))}
+    </nav>
+  </header>
+</div>

@@ -1,0 +1,36 @@
+---
+import { getMenu, getSiteSettings } from "emdash";
+
+const [settings, explore, contact] = await Promise.all([
+  getSiteSettings(),
+  getMenu("footer_explore"),
+  getMenu("footer_contact"),
+]);
+
+const year = new Date().getFullYear();
+const linkStyle = "display:inline-flex;align-items:center;min-height:36px;font-size:17px";
+const headingStyle = "font-weight:700;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#BF9D5E;margin-bottom:8px";
+---
+<footer id="contact" style="width:100%;box-sizing:border-box;background:#0F2B24;color:#F4EEDD;padding:64px 24px 40px">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:40px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <img src="/images/logo.png" alt={`${settings.title} logo`} width="110" height="110" style="display:block;width:110px;height:110px">
+        {settings.tagline && <span style="font-size:16px;color:#C5D4CB">{settings.tagline}</span>}
+      </div>
+      {explore && explore.items.length > 0 && (
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style={headingStyle}>{explore.label ?? "Explore"}</span>
+          {explore.items.map((item) => <a href={item.url} style={linkStyle}>{item.label}</a>)}
+        </div>
+      )}
+      {contact && contact.items.length > 0 && (
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style={headingStyle}>{contact.label ?? "Say hello"}</span>
+          {contact.items.map((item) => <a href={item.url} style={linkStyle}>{item.label}</a>)}
+        </div>
+      )}
+    </div>
+    <div style="border-top:1px solid #35574C;padding-top:24px;font-size:15px;color:#C5D4CB">© {year} {settings.title}</div>
+  </div>
+</footer>

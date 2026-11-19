@@ -1,0 +1,481 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "PHC homepage + events"
+  },
+  "settings": {
+    "title": "Prairie Homebrewing Companions",
+    "tagline": "Fargo–Moorhead's homebrew club."
+  },
+  "collections": [
+    {
+      "slug": "homepage",
+      "label": "Homepage",
+      "labelSingular": "Homepage",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Internal title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "hero_eyebrow",
+          "label": "Hero: small label above headline",
+          "type": "string"
+        },
+        {
+          "slug": "hero_headline",
+          "label": "Hero: headline (one line per row)",
+          "type": "text"
+        },
+        {
+          "slug": "hero_highlight",
+          "label": "Hero: gold headline line",
+          "type": "string"
+        },
+        {
+          "slug": "hero_intro",
+          "label": "Hero: intro paragraph",
+          "type": "text"
+        },
+        {
+          "slug": "hero_button_label",
+          "label": "Hero: gold button text",
+          "type": "string"
+        },
+        {
+          "slug": "hero_button_url",
+          "label": "Hero: gold button link",
+          "type": "url"
+        },
+        {
+          "slug": "hero_button2_label",
+          "label": "Hero: outline button text",
+          "type": "string"
+        },
+        {
+          "slug": "hero_button2_url",
+          "label": "Hero: outline button link",
+          "type": "url"
+        },
+        {
+          "slug": "welcome_bold",
+          "label": "Welcome band: bold opening sentence",
+          "type": "text"
+        },
+        {
+          "slug": "welcome_text",
+          "label": "Welcome band: rest of paragraph",
+          "type": "text"
+        },
+        {
+          "slug": "about_eyebrow",
+          "label": "About: small label",
+          "type": "string"
+        },
+        {
+          "slug": "about_heading",
+          "label": "About: heading",
+          "type": "string"
+        },
+        {
+          "slug": "card1_title",
+          "label": "Card 1 (green): title",
+          "type": "string"
+        },
+        {
+          "slug": "card1_text",
+          "label": "Card 1 (green): text",
+          "type": "text"
+        },
+        {
+          "slug": "card1_link_label",
+          "label": "Card 1 (green): link text",
+          "type": "string"
+        },
+        {
+          "slug": "card1_link_url",
+          "label": "Card 1 (green): link",
+          "type": "url"
+        },
+        {
+          "slug": "card2_title",
+          "label": "Card 2 (gold): title",
+          "type": "string"
+        },
+        {
+          "slug": "card2_text",
+          "label": "Card 2 (gold): text",
+          "type": "text"
+        },
+        {
+          "slug": "card2_link_label",
+          "label": "Card 2 (gold): link text",
+          "type": "string"
+        },
+        {
+          "slug": "card2_link_url",
+          "label": "Card 2 (gold): link",
+          "type": "url"
+        },
+        {
+          "slug": "card3_title",
+          "label": "Card 3 (outline): title",
+          "type": "string"
+        },
+        {
+          "slug": "card3_text",
+          "label": "Card 3 (outline): text",
+          "type": "text"
+        },
+        {
+          "slug": "card3_tags",
+          "label": "Card 3 (outline): tags, separated by commas",
+          "type": "string"
+        },
+        {
+          "slug": "card3_link_label",
+          "label": "Card 3 (outline): link text",
+          "type": "string"
+        },
+        {
+          "slug": "card3_link_url",
+          "label": "Card 3 (outline): link",
+          "type": "url"
+        },
+        {
+          "slug": "events_eyebrow",
+          "label": "Events: small label",
+          "type": "string"
+        },
+        {
+          "slug": "events_heading",
+          "label": "Events: heading",
+          "type": "string"
+        },
+        {
+          "slug": "events_empty",
+          "label": "Events: text when no upcoming events",
+          "type": "string"
+        },
+        {
+          "slug": "events_all_label",
+          "label": "Events: 'all events' link text",
+          "type": "string"
+        },
+        {
+          "slug": "events_all_url",
+          "label": "Events: 'all events' link",
+          "type": "url"
+        },
+        {
+          "slug": "feature_badge",
+          "label": "Feature card: badge",
+          "type": "string"
+        },
+        {
+          "slug": "feature_title",
+          "label": "Feature card: title",
+          "type": "string"
+        },
+        {
+          "slug": "feature_text",
+          "label": "Feature card: text",
+          "type": "text"
+        },
+        {
+          "slug": "feature_link_label",
+          "label": "Feature card: link text",
+          "type": "string"
+        },
+        {
+          "slug": "feature_link_url",
+          "label": "Feature card: link",
+          "type": "url"
+        },
+        {
+          "slug": "join_heading",
+          "label": "Join: heading (cream part)",
+          "type": "string"
+        },
+        {
+          "slug": "join_highlight",
+          "label": "Join: heading (gold part)",
+          "type": "string"
+        },
+        {
+          "slug": "join_text",
+          "label": "Join: paragraph",
+          "type": "text"
+        },
+        {
+          "slug": "join_button_label",
+          "label": "Join: button text",
+          "type": "string"
+        },
+        {
+          "slug": "join_button_url",
+          "label": "Join: button link",
+          "type": "url"
+        },
+        {
+          "slug": "join_perks",
+          "label": "Join: checklist items",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "text",
+                "label": "Item",
+                "type": "string",
+                "required": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "events",
+      "label": "Events",
+      "labelSingular": "Event",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "search"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Event name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "event_date",
+          "label": "Date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "slug": "time_label",
+          "label": "Time (e.g. 6:30 PM)",
+          "type": "string"
+        },
+        {
+          "slug": "location",
+          "label": "Location",
+          "type": "string"
+        },
+        {
+          "slug": "summary",
+          "label": "Short description",
+          "type": "text"
+        },
+        {
+          "slug": "details_url",
+          "label": "Details link (optional)",
+          "type": "url"
+        }
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Primary navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/#about"
+        },
+        {
+          "type": "custom",
+          "label": "Events",
+          "url": "/#events"
+        },
+        {
+          "type": "custom",
+          "label": "Hoppy Halloween",
+          "url": "/#halloween"
+        },
+        {
+          "type": "custom",
+          "label": "Resources",
+          "url": "/#resources"
+        },
+        {
+          "type": "custom",
+          "label": "Contact Us",
+          "url": "#contact"
+        }
+      ]
+    },
+    {
+      "name": "header_cta",
+      "label": "Header button",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Join us",
+          "url": "/#join"
+        }
+      ]
+    },
+    {
+      "name": "footer_explore",
+      "label": "Explore",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About & membership",
+          "url": "/#about"
+        },
+        {
+          "type": "custom",
+          "label": "Award of Brewing",
+          "url": "/#award"
+        },
+        {
+          "type": "custom",
+          "label": "Events",
+          "url": "/#events"
+        },
+        {
+          "type": "custom",
+          "label": "Great Beer Near Here",
+          "url": "/#resources"
+        }
+      ]
+    },
+    {
+      "name": "footer_contact",
+      "label": "Say hello",
+      "items": [
+        {
+          "type": "custom",
+          "label": "[CLUB EMAIL]",
+          "url": "mailto:[CLUB EMAIL]"
+        },
+        {
+          "type": "custom",
+          "label": "[FACEBOOK / SOCIAL LINK]",
+          "url": "#"
+        },
+        {
+          "type": "custom",
+          "label": "Contact Us",
+          "url": "#contact"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "homepage": [
+      {
+        "id": "home",
+        "slug": "home",
+        "status": "published",
+        "data": {
+          "title": "Homepage",
+          "hero_eyebrow": "Fargo–Moorhead homebrew club",
+          "hero_headline": "Brew it.\nShare it.",
+          "hero_highlight": "Raise a glass.",
+          "hero_intro": "Annual traditions, monthly meetups and spontaneous outings with a beer-loving crowd. Whether you brew or just like to drink, new faces are always welcome.",
+          "hero_button_label": "Join us",
+          "hero_button_url": "#join",
+          "hero_button2_label": "See what's coming up",
+          "hero_button2_url": "#events",
+          "welcome_bold": "Whether you've brewed for years or just love a good pint, there's a seat for you at our table.",
+          "welcome_text": "We're a group of Fargo–Moorhead beer lovers who get together for annual traditions, monthly meetups and spontaneous outings. Bring your brew, bring your questions, or just bring yourself.",
+          "about_eyebrow": "What the club is about",
+          "about_heading": "Good beer is better with good company.",
+          "card1_title": "Social events",
+          "card1_text": "Join our beer-loving group at any of our numerous annual, monthly and spontaneous outings. New faces always welcome!",
+          "card1_link_label": "Join us",
+          "card1_link_url": "#events",
+          "card2_title": "Award of Brewing",
+          "card2_text": "Bring your brew to gain recognition, win prizes and receive valuable feedback from BJCP judges.",
+          "card2_link_label": "Learn more",
+          "card2_link_url": "#award",
+          "card3_title": "Club resources",
+          "card3_text": "Gain access to gear and know-how you'd rather not buy yourself.",
+          "card3_tags": "Jockey box, Lending library, Pin cask",
+          "card3_link_label": "View club resources",
+          "card3_link_url": "#join",
+          "events_eyebrow": "Coming up",
+          "events_heading": "On the calendar",
+          "events_empty": "New events are on the way. Check back soon!",
+          "events_all_label": "All club events",
+          "events_all_url": "#events",
+          "feature_badge": "Club favorite",
+          "feature_title": "Hoppy Halloween",
+          "feature_text": "[ONE-LINE DESCRIPTION OF HOPPY HALLOWEEN]",
+          "feature_link_label": "See the Hoppy Halloween page",
+          "feature_link_url": "#halloween",
+          "join_heading": "Interested?",
+          "join_highlight": "Sign up for a membership.",
+          "join_text": "Get in on the events, the Award of Brewing and the club's gear.",
+          "join_button_label": "Learn more",
+          "join_button_url": "#join",
+          "join_perks": [
+            {
+              "text": "Annual, monthly and spontaneous outings"
+            },
+            {
+              "text": "Feedback from BJCP judges"
+            },
+            {
+              "text": "Jockey box, library and pin cask"
+            }
+          ]
+        }
+      }
+    ],
+    "events": [
+      {
+        "id": "ev1",
+        "slug": "sample-monthly-meetup",
+        "status": "published",
+        "data": {
+          "title": "[SAMPLE] Monthly meetup",
+          "event_date": "2026-12-10T18:30:00.000Z",
+          "time_label": "6:30 PM",
+          "location": "[Location]"
+        }
+      },
+      {
+        "id": "ev2",
+        "slug": "sample-holiday-party",
+        "status": "published",
+        "data": {
+          "title": "[SAMPLE] Holiday party",
+          "event_date": "2026-12-19T19:00:00.000Z",
+          "time_label": "7:00 PM",
+          "location": "[Location]"
+        }
+      },
+      {
+        "id": "ev3",
+        "slug": "sample-january-brew-day",
+        "status": "published",
+        "data": {
+          "title": "[SAMPLE] January brew day",
+          "event_date": "2027-01-16T16:00:00.000Z",
+          "time_label": "10:00 AM",
+          "location": "[Location]"
+        }
+      }
+    ]
+  }
+}
