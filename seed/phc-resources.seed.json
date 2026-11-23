@@ -1,0 +1,573 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "PHC resources"
+  },
+  "collections": [
+    {
+      "slug": "resources_page",
+      "label": "Resources Page",
+      "labelSingular": "Resources Page",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Internal title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "hero_eyebrow",
+          "label": "Hero: small label",
+          "type": "string"
+        },
+        {
+          "slug": "hero_title",
+          "label": "Hero: headline",
+          "type": "text"
+        },
+        {
+          "slug": "hero_lead",
+          "label": "Hero: intro",
+          "type": "text"
+        },
+        {
+          "slug": "associations_title",
+          "label": "Associations: section title",
+          "type": "string"
+        },
+        {
+          "slug": "associations_text",
+          "label": "Associations: section description",
+          "type": "text"
+        },
+        {
+          "slug": "clubs_title",
+          "label": "Regional clubs: section title",
+          "type": "string"
+        },
+        {
+          "slug": "clubs_text",
+          "label": "Regional clubs: section description",
+          "type": "text"
+        },
+        {
+          "slug": "supplies_title",
+          "label": "Supplies: section title",
+          "type": "string"
+        },
+        {
+          "slug": "supplies_text",
+          "label": "Supplies: section description",
+          "type": "text"
+        },
+        {
+          "slug": "reading_title",
+          "label": "Brewing resources: section title",
+          "type": "string"
+        },
+        {
+          "slug": "reading_text",
+          "label": "Brewing resources: section description",
+          "type": "text"
+        },
+        {
+          "slug": "breweries_title",
+          "label": "Regional breweries: section title",
+          "type": "string"
+        },
+        {
+          "slug": "breweries_text",
+          "label": "Regional breweries: section description",
+          "type": "text"
+        },
+        {
+          "slug": "shop_tag",
+          "label": "Featured shop: tag",
+          "type": "string"
+        },
+        {
+          "slug": "shop_name",
+          "label": "Featured shop: name",
+          "type": "string"
+        },
+        {
+          "slug": "shop_text",
+          "label": "Featured shop: description",
+          "type": "text"
+        },
+        {
+          "slug": "shop_address",
+          "label": "Featured shop: address",
+          "type": "string"
+        },
+        {
+          "slug": "shop_phone",
+          "label": "Featured shop: phone (as shown)",
+          "type": "string"
+        },
+        {
+          "slug": "shop_link_label",
+          "label": "Featured shop: second button text",
+          "type": "string"
+        },
+        {
+          "slug": "shop_link_url",
+          "label": "Featured shop: second button link",
+          "type": "url"
+        },
+        {
+          "slug": "events_eyebrow",
+          "label": "Events block: small label",
+          "type": "string"
+        },
+        {
+          "slug": "facebook_url",
+          "label": "Events block: Facebook link",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "slug": "resources",
+      "label": "Resource Links",
+      "labelSingular": "Resource Link",
+      "supports": [
+        "drafts",
+        "revisions",
+        "search"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "category",
+          "label": "Category",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "Associations",
+              "Regional clubs",
+              "Supplies",
+              "Brewing resources",
+              "Breweries: North Dakota",
+              "Breweries: Minnesota"
+            ]
+          }
+        },
+        {
+          "slug": "url",
+          "label": "Link",
+          "type": "url"
+        },
+        {
+          "slug": "meta",
+          "label": "Location or note (e.g. St. Cloud, MN)",
+          "type": "string"
+        },
+        {
+          "slug": "sort_order",
+          "label": "Order (lower numbers show first)",
+          "type": "integer"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "resources_page": [
+      {
+        "id": "resources",
+        "slug": "resources",
+        "status": "published",
+        "data": {
+          "title": "Resources page",
+          "hero_eyebrow": "Resources",
+          "hero_title": "Where we send people for supplies, learning and a good pour.",
+          "hero_lead": "Associations, fellow clubs, supply shops and breweries in and around the region, all in one place.",
+          "associations_title": "Associations",
+          "associations_text": "National and regional organizations for homebrewers, judges and craft brewers.",
+          "clubs_title": "Regional homebrew clubs",
+          "clubs_text": "Fellow clubs across the Upper Midwest.",
+          "supplies_title": "Supplies",
+          "supplies_text": "One shop close to home, plus the online retailers.",
+          "reading_title": "Brewing resources",
+          "reading_text": "Reading and reference for your next batch.",
+          "breweries_title": "Regional breweries",
+          "breweries_text": "Beer, mead, cider and wine within a drive.",
+          "shop_tag": "Local · Fargo",
+          "shop_name": "Tochi Products",
+          "shop_text": "Limited but local homebrewing supplies including hops (ask to see selection), dry yeast, and basic supplies.",
+          "shop_address": "1111 2nd Ave N, Fargo, ND",
+          "shop_phone": "(701) 232-7700",
+          "shop_link_label": "Facebook",
+          "shop_link_url": "https://www.facebook.com/TochiProducts/",
+          "events_eyebrow": "PHC events",
+          "facebook_url": "https://www.facebook.com/PrairieHomebrewingCompanions/"
+        }
+      }
+    ],
+    "resources": [
+      {
+        "id": "american-homebrewers-association",
+        "slug": "american-homebrewers-association",
+        "status": "published",
+        "data": {
+          "title": "American Homebrewers Association",
+          "category": "Associations",
+          "url": "https://homebrewersassociation.org",
+          "sort_order": 10
+        }
+      },
+      {
+        "id": "brewers-association",
+        "slug": "brewers-association",
+        "status": "published",
+        "data": {
+          "title": "Brewers Association",
+          "category": "Associations",
+          "url": "https://brewersassociation.org",
+          "sort_order": 20
+        }
+      },
+      {
+        "id": "beer-judge-certification-program",
+        "slug": "beer-judge-certification-program",
+        "status": "published",
+        "data": {
+          "title": "Beer Judge Certification Program",
+          "category": "Associations",
+          "url": "https://bjcp.org",
+          "sort_order": 30
+        }
+      },
+      {
+        "id": "north-dakota-brewers-guild",
+        "slug": "north-dakota-brewers-guild",
+        "status": "published",
+        "data": {
+          "title": "North Dakota Brewers Guild",
+          "category": "Associations",
+          "url": "https://ndbrewersguild.com",
+          "sort_order": 40
+        }
+      },
+      {
+        "id": "minnesota-craft-brewing-guild",
+        "slug": "minnesota-craft-brewing-guild",
+        "status": "published",
+        "data": {
+          "title": "Minnesota Craft Brewing Guild",
+          "category": "Associations",
+          "url": "https://mncraftbrew.org",
+          "sort_order": 50
+        }
+      },
+      {
+        "id": "cloudy-town-brewers",
+        "slug": "cloudy-town-brewers",
+        "status": "published",
+        "data": {
+          "title": "Cloudy Town Brewers",
+          "category": "Regional clubs",
+          "url": "https://cloudytownbrewers.org",
+          "sort_order": 10,
+          "meta": "St. Cloud, MN"
+        }
+      },
+      {
+        "id": "heart-river-homebrewers",
+        "slug": "heart-river-homebrewers",
+        "status": "published",
+        "data": {
+          "title": "Heart River Homebrewers",
+          "category": "Regional clubs",
+          "url": "https://heartriverhomebrewers.com",
+          "sort_order": 20,
+          "meta": "Dickinson, ND"
+        }
+      },
+      {
+        "id": "kansas-city-bier-meisters",
+        "slug": "kansas-city-bier-meisters",
+        "status": "published",
+        "data": {
+          "title": "Kansas City Bier Meisters",
+          "category": "Regional clubs",
+          "url": "https://kcbiermeisters.org",
+          "sort_order": 30,
+          "meta": "Kansas City, MO"
+        }
+      },
+      {
+        "id": "minnesota-home-brewers-association-mhba",
+        "slug": "minnesota-home-brewers-association-mhba",
+        "status": "published",
+        "data": {
+          "title": "Minnesota Home Brewers Association (MhBA)",
+          "category": "Regional clubs",
+          "url": "https://mnbrewers.com",
+          "sort_order": 40,
+          "meta": "Minneapolis, MN"
+        }
+      },
+      {
+        "id": "st-paul-homebrewers-club",
+        "slug": "st-paul-homebrewers-club",
+        "status": "published",
+        "data": {
+          "title": "St. Paul Homebrewers Club",
+          "category": "Regional clubs",
+          "url": "https://sphbc.org",
+          "sort_order": 50,
+          "meta": "St. Paul, MN"
+        }
+      },
+      {
+        "id": "northern-brewer",
+        "slug": "northern-brewer",
+        "status": "published",
+        "data": {
+          "title": "Northern Brewer",
+          "category": "Supplies",
+          "url": "https://northernbrewer.com",
+          "sort_order": 10
+        }
+      },
+      {
+        "id": "more-beer",
+        "slug": "more-beer",
+        "status": "published",
+        "data": {
+          "title": "More Beer",
+          "category": "Supplies",
+          "url": "https://morebeer.com",
+          "sort_order": 20
+        }
+      },
+      {
+        "id": "ritebrew",
+        "slug": "ritebrew",
+        "status": "published",
+        "data": {
+          "title": "RiteBrew",
+          "category": "Supplies",
+          "url": "https://ritebrew.com",
+          "sort_order": 30
+        }
+      },
+      {
+        "id": "williams-brewing",
+        "slug": "williams-brewing",
+        "status": "published",
+        "data": {
+          "title": "Williams Brewing",
+          "category": "Supplies",
+          "url": "https://williamsbrewing.com",
+          "sort_order": 40
+        }
+      },
+      {
+        "id": "brew-your-own",
+        "slug": "brew-your-own",
+        "status": "published",
+        "data": {
+          "title": "Brew Your Own",
+          "category": "Brewing resources",
+          "url": "https://byo.com",
+          "sort_order": 10,
+          "meta": "The how-to homebrew beer magazine"
+        }
+      },
+      {
+        "id": "real-beer",
+        "slug": "real-beer",
+        "status": "published",
+        "data": {
+          "title": "Real Beer",
+          "category": "Brewing resources",
+          "url": "https://realbeer.com",
+          "sort_order": 20
+        }
+      },
+      {
+        "id": "brockopp-brewing",
+        "slug": "brockopp-brewing",
+        "status": "published",
+        "data": {
+          "title": "Brockopp Brewing",
+          "category": "Breweries: North Dakota",
+          "url": "https://www.facebook.com/BrockoppBrewing",
+          "sort_order": 10,
+          "meta": "Valley City"
+        }
+      },
+      {
+        "id": "drekker-brewing-company",
+        "slug": "drekker-brewing-company",
+        "status": "published",
+        "data": {
+          "title": "Drekker Brewing Company",
+          "category": "Breweries: North Dakota",
+          "url": "https://drekkerbrewing.com",
+          "sort_order": 20,
+          "meta": "Fargo"
+        }
+      },
+      {
+        "id": "north-brewing-company",
+        "slug": "north-brewing-company",
+        "status": "published",
+        "data": {
+          "title": "North Brewing Company",
+          "category": "Breweries: North Dakota",
+          "url": "https://northbrew.co",
+          "sort_order": 30,
+          "meta": "Fargo"
+        }
+      },
+      {
+        "id": "icewind-brewing",
+        "slug": "icewind-brewing",
+        "status": "published",
+        "data": {
+          "title": "Icewind Brewing",
+          "category": "Breweries: North Dakota",
+          "url": "https://icewindbrewing.com",
+          "sort_order": 40,
+          "meta": "Mapleton"
+        }
+      },
+      {
+        "id": "prairie-rose-meadery",
+        "slug": "prairie-rose-meadery",
+        "status": "published",
+        "data": {
+          "title": "Prairie Rose Meadery",
+          "category": "Breweries: North Dakota",
+          "url": "https://prairierosemeadery.com",
+          "sort_order": 50,
+          "meta": "Fargo"
+        }
+      },
+      {
+        "id": "cottonwood-cider-house",
+        "slug": "cottonwood-cider-house",
+        "status": "published",
+        "data": {
+          "title": "Cottonwood Cider House",
+          "category": "Breweries: North Dakota",
+          "url": "https://cottonwoodciderhouse.com",
+          "sort_order": 60,
+          "meta": "Ayr"
+        }
+      },
+      {
+        "id": "wild-terra-cider",
+        "slug": "wild-terra-cider",
+        "status": "published",
+        "data": {
+          "title": "Wild Terra Cider",
+          "category": "Breweries: North Dakota",
+          "url": "https://wildterra.co",
+          "sort_order": 70,
+          "meta": "Fargo"
+        }
+      },
+      {
+        "id": "maple-river-winery",
+        "slug": "maple-river-winery",
+        "status": "published",
+        "data": {
+          "title": "Maple River Winery",
+          "category": "Breweries: North Dakota",
+          "url": "https://mapleriverwinery.com",
+          "sort_order": 80,
+          "meta": "Casselton"
+        }
+      },
+      {
+        "id": "pointe-of-view-winery",
+        "slug": "pointe-of-view-winery",
+        "status": "published",
+        "data": {
+          "title": "Pointe of View Winery",
+          "category": "Breweries: North Dakota",
+          "url": "https://povwinery.com",
+          "sort_order": 90,
+          "meta": "Burlington"
+        }
+      },
+      {
+        "id": "red-trail-vineyard",
+        "slug": "red-trail-vineyard",
+        "status": "published",
+        "data": {
+          "title": "Red Trail Vineyard",
+          "category": "Breweries: North Dakota",
+          "url": "https://redtrailvineyard.com",
+          "sort_order": 100,
+          "meta": "Buffalo"
+        }
+      },
+      {
+        "id": "bemidji-brewing",
+        "slug": "bemidji-brewing",
+        "status": "published",
+        "data": {
+          "title": "Bemidji Brewing",
+          "category": "Breweries: Minnesota",
+          "url": "https://bemidjibrewing.com",
+          "sort_order": 10,
+          "meta": "Bemidji"
+        }
+      },
+      {
+        "id": "jack-pine-brewing",
+        "slug": "jack-pine-brewing",
+        "status": "published",
+        "data": {
+          "title": "Jack Pine Brewing",
+          "category": "Breweries: Minnesota",
+          "url": "https://jackpinebrewery.com",
+          "sort_order": 20,
+          "meta": "Baxter"
+        }
+      },
+      {
+        "id": "junkyard-brewing",
+        "slug": "junkyard-brewing",
+        "status": "published",
+        "data": {
+          "title": "Junkyard Brewing",
+          "category": "Breweries: Minnesota",
+          "url": "https://junkyardbeer.com",
+          "sort_order": 30,
+          "meta": "Moorhead"
+        }
+      },
+      {
+        "id": "swing-barrel-brewing-company",
+        "slug": "swing-barrel-brewing-company",
+        "status": "published",
+        "data": {
+          "title": "Swing Barrel Brewing Company",
+          "category": "Breweries: Minnesota",
+          "url": "https://swingbarrelbrew.com",
+          "sort_order": 40,
+          "meta": "Moorhead"
+        }
+      }
+    ]
+  }
+}

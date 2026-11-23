@@ -1,0 +1,340 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "PHC Hoppy Halloween"
+  },
+  "collections": [
+    {
+      "slug": "hoppy_halloween",
+      "label": "Hoppy Halloween",
+      "labelSingular": "Hoppy Halloween year",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Internal title (e.g. Hoppy Halloween 2026)",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "year",
+          "label": "Competition year",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "slug": "color_primary",
+          "label": "Color: main",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_primary_deep",
+          "label": "Color: dark background",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_primary_soft",
+          "label": "Color: hover/links",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_accent",
+          "label": "Color: accent",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_accent_light",
+          "label": "Color: light accent band",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_background",
+          "label": "Color: page background",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "color_text",
+          "label": "Color: body text",
+          "type": "string",
+          "widget": "phc-colors:color"
+        },
+        {
+          "slug": "banner",
+          "label": "Banner image",
+          "type": "image"
+        },
+        {
+          "slug": "hero_title",
+          "label": "Hero: title",
+          "type": "string"
+        },
+        {
+          "slug": "hero_subtitle",
+          "label": "Hero: subtitle",
+          "type": "string"
+        },
+        {
+          "slug": "intro",
+          "label": "Intro paragraph",
+          "type": "text"
+        },
+        {
+          "slug": "button_label",
+          "label": "Intro: button text",
+          "type": "string"
+        },
+        {
+          "slug": "button_url",
+          "label": "Intro: button link",
+          "type": "url"
+        },
+        {
+          "slug": "button_note",
+          "label": "Intro: small note under button",
+          "type": "string"
+        },
+        {
+          "slug": "dates_heading",
+          "label": "Key dates: heading (leave blank for 'Key Dates (year)')",
+          "type": "string"
+        },
+        {
+          "slug": "key_dates",
+          "label": "Key dates: rows",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "label",
+                "label": "What",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "date",
+                "label": "When",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "badge",
+                "label": "Badge (optional, e.g. Open now!)",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "banquet_heading",
+          "label": "Banquet: heading",
+          "type": "string"
+        },
+        {
+          "slug": "banquet_date",
+          "label": "Banquet: date",
+          "type": "string"
+        },
+        {
+          "slug": "venue_name",
+          "label": "Banquet: venue name",
+          "type": "string"
+        },
+        {
+          "slug": "venue_address",
+          "label": "Banquet: venue address (one line per row)",
+          "type": "text"
+        },
+        {
+          "slug": "schedule",
+          "label": "Banquet: schedule rows",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "label",
+                "label": "What",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "time",
+                "label": "Time",
+                "type": "string",
+                "required": true
+              }
+            ]
+          }
+        },
+        {
+          "slug": "banquet_note",
+          "label": "Banquet: footnote text",
+          "type": "string"
+        },
+        {
+          "slug": "banquet_note_link_label",
+          "label": "Banquet: footnote link text",
+          "type": "string"
+        },
+        {
+          "slug": "banquet_note_link_url",
+          "label": "Banquet: footnote link",
+          "type": "url"
+        },
+        {
+          "slug": "callout_text",
+          "label": "Callout box: text",
+          "type": "text"
+        },
+        {
+          "slug": "callout_link_label",
+          "label": "Callout box: link text",
+          "type": "string"
+        },
+        {
+          "slug": "callout_link_url",
+          "label": "Callout box: link",
+          "type": "url"
+        },
+        {
+          "slug": "questions_heading",
+          "label": "Questions: heading",
+          "type": "string"
+        },
+        {
+          "slug": "questions_text",
+          "label": "Questions: text before link",
+          "type": "string"
+        },
+        {
+          "slug": "questions_link_label",
+          "label": "Questions: link text",
+          "type": "string"
+        },
+        {
+          "slug": "questions_link_url",
+          "label": "Questions: link",
+          "type": "url"
+        },
+        {
+          "slug": "history_text",
+          "label": "Questions: history text before link",
+          "type": "string"
+        },
+        {
+          "slug": "history_link_label",
+          "label": "Questions: history link text",
+          "type": "string"
+        },
+        {
+          "slug": "history_link_url",
+          "label": "Questions: history link",
+          "type": "url"
+        },
+        {
+          "slug": "show_next_event",
+          "label": "Show next club event at bottom",
+          "type": "boolean"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "hoppy_halloween": [
+      {
+        "id": "hh-2026",
+        "slug": "2026",
+        "status": "published",
+        "data": {
+          "title": "Hoppy Halloween 2026",
+          "year": 2026,
+          "color_primary": "#183D34",
+          "color_primary_deep": "#0F2A23",
+          "color_primary_soft": "#2A5547",
+          "color_accent": "#C9A24A",
+          "color_accent_light": "#F3E7C4",
+          "color_background": "#FBF8F1",
+          "color_text": "#1D2B27",
+          "banner": {
+            "$media": {
+              "url": "https://prairiehomebrewers.org/hoppyhalloween/banner.png",
+              "alt": "Hoppy Halloween Challenge banner",
+              "filename": "hoppy-halloween-banner.png"
+            }
+          },
+          "hero_title": "Hoppy Halloween Challenge",
+          "hero_subtitle": "The Spooky Brewing Competition",
+          "intro": "Each October, the Prairie Homebrewing Companions host the Hoppy Halloween Challenge in the Fargo, ND / Moorhead, MN area, drawing entrants from across the United States and Canada, all vying to be crowned the “Great Pumpkin” of brewers. The competition accepts all BJCP beer, mead, and cider categories, and counts toward both the Midwest Homebrewer of the Year and High Plains Brewer circuits. Winners take home medals hung from hand-crafted, Halloween-themed lanyards.",
+          "button_label": "Full Competition Details & Entry",
+          "button_url": "https://brewingcompetitions.com/hoppyhalloween",
+          "button_note": "For complete competition instructions, visit brewingcompetitions.com/hoppyhalloween",
+          "key_dates": [
+            {
+              "label": "Account registration",
+              "date": "Jul 1, 2026",
+              "badge": "Open now!"
+            },
+            {
+              "label": "Entry registration opens",
+              "date": "Sep 15, 2026, 7:00 PM CDT"
+            },
+            {
+              "label": "Entry registration / drop-off / shipping closes",
+              "date": "Oct 9, 2026, 7:00 PM CDT"
+            },
+            {
+              "label": "Judging sessions",
+              "date": "Oct 14 – Oct 24, 2026"
+            }
+          ],
+          "banquet_heading": "Banquet & Awards Ceremony",
+          "banquet_date": "Oct 24, 2026",
+          "venue_name": "Country Inn & Suites – Meadow Room",
+          "venue_address": "3316 13th Ave S\nFargo, ND 58103",
+          "schedule": [
+            {
+              "label": "Halloween Theme judging",
+              "time": "4:00 PM CDT"
+            },
+            {
+              "label": "Banquet*",
+              "time": "6:30 PM CDT"
+            },
+            {
+              "label": "Guest Speaker",
+              "time": "7:30 PM CDT"
+            },
+            {
+              "label": "Awards Ceremony",
+              "time": "8:30 PM CDT"
+            }
+          ],
+          "banquet_note": "*The Banquet is a ticketed event.",
+          "banquet_note_link_label": "Email us to purchase tickets",
+          "banquet_note_link_url": "/#contact",
+          "callout_text": "The Guest Speaker and Awards Ceremony are free to attend and will also be livestreamed on our Facebook group page.",
+          "callout_link_label": "Hoppy Halloween Challenge Facebook group",
+          "callout_link_url": "https://www.facebook.com/groups/122960144405260",
+          "questions_heading": "Questions?",
+          "questions_text": "Reach the Hoppy Halloween team by",
+          "questions_link_label": "email",
+          "questions_link_url": "/#contact",
+          "history_text": "Past winners and competition history can be found at",
+          "history_link_label": "hoppyhalloween.com",
+          "history_link_url": "https://hoppyhalloween.com",
+          "show_next_event": true
+        }
+      }
+    ]
+  }
+}

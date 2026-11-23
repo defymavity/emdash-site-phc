@@ -5,10 +5,119 @@
 
 import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
 
+export interface Event {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  event_date: string;
+  time_label?: string;
+  location?: string;
+  summary?: string;
+  details_url?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface Homepage {
   id: string;
   slug: string | null;
   status: string;
+  title: string;
+  hero_eyebrow?: string;
+  hero_headline?: string;
+  hero_highlight?: string;
+  hero_intro?: string;
+  hero_button_label?: string;
+  hero_button_url?: string;
+  hero_button2_label?: string;
+  hero_button2_url?: string;
+  welcome_bold?: string;
+  welcome_text?: string;
+  about_eyebrow?: string;
+  about_heading?: string;
+  card1_title?: string;
+  card1_text?: string;
+  card1_link_label?: string;
+  card1_link_url?: string;
+  card2_title?: string;
+  card2_text?: string;
+  card2_link_label?: string;
+  card2_link_url?: string;
+  card3_title?: string;
+  card3_text?: string;
+  card3_tags?: string;
+  card3_link_label?: string;
+  card3_link_url?: string;
+  events_eyebrow?: string;
+  events_heading?: string;
+  events_empty?: string;
+  events_all_label?: string;
+  events_all_url?: string;
+  feature_badge?: string;
+  feature_title?: string;
+  feature_text?: string;
+  feature_link_label?: string;
+  feature_link_url?: string;
+  join_heading?: string;
+  join_highlight?: string;
+  join_text?: string;
+  join_button_label?: string;
+  join_button_url?: string;
+  join_perks?: { "text": string }[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface HoppyHalloween {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  year: number;
+  color_primary?: string;
+  color_primary_deep?: string;
+  color_primary_soft?: string;
+  color_accent?: string;
+  color_accent_light?: string;
+  color_background?: string;
+  color_text?: string;
+  banner?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  hero_title?: string;
+  hero_subtitle?: string;
+  intro?: string;
+  button_label?: string;
+  button_url?: string;
+  button_note?: string;
+  dates_heading?: string;
+  key_dates?: { "label": string; "date": string; "badge"?: string | null }[];
+  banquet_heading?: string;
+  banquet_date?: string;
+  venue_name?: string;
+  venue_address?: string;
+  schedule?: { "label": string; "time": string }[];
+  banquet_note?: string;
+  banquet_note_link_label?: string;
+  banquet_note_link_url?: string;
+  callout_text?: string;
+  callout_link_label?: string;
+  callout_link_url?: string;
+  questions_heading?: string;
+  questions_text?: string;
+  questions_link_label?: string;
+  questions_link_url?: string;
+  history_text?: string;
+  history_link_label?: string;
+  history_link_url?: string;
+  show_next_event?: boolean;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -47,10 +156,66 @@ export interface Post {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Resource {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  category: "Associations" | "Regional clubs" | "Supplies" | "Brewing resources" | "Breweries: North Dakota" | "Breweries: Minnesota";
+  url?: string;
+  meta?: string;
+  sort_order?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface ResourcesPage {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  hero_eyebrow?: string;
+  hero_title?: string;
+  hero_lead?: string;
+  associations_title?: string;
+  associations_text?: string;
+  clubs_title?: string;
+  clubs_text?: string;
+  supplies_title?: string;
+  supplies_text?: string;
+  reading_title?: string;
+  reading_text?: string;
+  breweries_title?: string;
+  breweries_text?: string;
+  shop_tag?: string;
+  shop_name?: string;
+  shop_text?: string;
+  shop_address?: string;
+  shop_phone?: string;
+  shop_link_label?: string;
+  shop_link_url?: string;
+  events_eyebrow?: string;
+  facebook_url?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 declare module "emdash" {
   interface EmDashCollections {
-    homepages: Homepage;
+    events: Event;
+    homepage: Homepage;
+    hoppy_halloween: HoppyHalloween;
     pages: Page;
     posts: Post;
+    resources: Resource;
+    resources_page: ResourcesPage;
   }
 }

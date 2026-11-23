@@ -1,0 +1,280 @@
+---
+import { getEmDashCollection, getEmDashEntry } from "emdash";
+import Base from "../layouts/Base.astro";
+
+// Page text comes from Admin > Resources Page > "resources"
+const { entry } = await getEmDashEntry("resources_page", "resources");
+const r: Record<string, any> = entry?.data ?? {};
+
+// Links come from Admin > Resource Links, grouped by Category
+const { entries: allLinks } = await getEmDashCollection("resources", { status: "published", limit: 500 });
+const byCat = (cat: string) =>
+  allLinks
+    .filter((l) => l.data.category === cat)
+    .sort((a, b) => (a.data.sort_order ?? 9999) - (b.data.sort_order ?? 9999) || String(a.data.title).localeCompare(String(b.data.title)));
+const associations = byCat("Associations");
+const clubs = byCat("Regional clubs");
+const suppliers = byCat("Supplies");
+const reading = byCat("Brewing resources");
+const breweriesND = byCat("Breweries: North Dakota");
+const breweriesMN = byCat("Breweries: Minnesota");
+
+// "PHC events" block shows the next upcoming event from Admin > Events
+const { entries: events } = await getEmDashCollection("events", {
+  status: "published",
+  orderBy: { event_date: "asc" },
+  limit: 50,
+});
+const startOfToday = new Date();
+startOfToday.setHours(0, 0, 0, 0);
+const next = events.find((e) => e.data.event_date && new Date(e.data.event_date) >= startOfToday);
+
+const tz = "America/Chicago";
+const fmt = (d: Date, o: Intl.DateTimeFormatOptions) => new Date(d).toLocaleDateString("en-US", { ...o, timeZone: tz });
+const domain = (url?: string) => (url ?? "").replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+const tel = (phone?: string) => "tel:+1" + String(phone ?? "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+---
+<Base title="Resources" description={r.hero_lead}>
+
+  <!-- Intro -->
+  <section class="hero">
+    <div class="hero__band" aria-hidden="true"></div>
+    <div class="hero__inner">
+      {r.hero_eyebrow && <p class="eyebrow">{r.hero_eyebrow}</p>}
+      <h1 class="hero__title">{r.hero_title}</h1>
+      {r.hero_lead && <p class="hero__lead">{r.hero_lead}</p>}
+      <nav class="hero__nav" aria-label="On this page">
+        {associations.length > 0 && <a class="chip" href="#associations">{r.associations_title}</a>}
+        {clubs.length > 0 && <a class="chip" href="#clubs">{r.clubs_title}</a>}
+        <a class="chip" href="#supplies">{r.supplies_title}</a>
+        {reading.length > 0 && <a class="chip" href="#reading">{r.reading_title}</a>}
+        {(breweriesND.length + breweriesMN.length) > 0 && <a class="chip" href="#breweries">{r.breweries_title}</a>}
+        <a class="chip" href="#phc-events">{r.events_eyebrow || "PHC events"}</a>
+      </nav>
+    </div>
+  </section>
+
+  {[
+    { id: "associations", title: r.associations_title, text: r.associations_text, links: associations },
+    { id: "clubs", title: r.clubs_title, text: r.clubs_text, links: clubs },
+  ].filter((sec) => sec.links.length > 0).map((sec) => (
+    <section class="section" id={sec.id}>
+      <div class="section__inner split">
+        <div class="split__intro">
+          <h2 class="section__title">{sec.title}</h2>
+          {sec.text && <p class="section__text">{sec.text}</p>}
+        </div>
+        <ul class="split__body link-list">
+          {sec.links.map((l) => (
+            <li><a class="link-row" href={l.data.url} target="_blank" rel="noopener">
+              <span class="link-row__name">{l.data.title} {l.data.meta && <span class="link-row__meta">{l.data.meta}</span>}</span>
+              <span class="link-row__url">{domain(l.data.url)} <span class="external" aria-hidden="true">↗</span></span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ))}
+
+  <!-- Supplies -->
+  <section class="section" id="supplies">
+    <div class="section__inner split">
+      <div class="split__intro">
+        <h2 class="section__title">{r.supplies_title}</h2>
+        {r.supplies_text && <p class="section__text">{r.supplies_text}</p>}
+      </div>
+      <div class="split__body split__body--stack">
+        {r.shop_name && (
+          <article class="feature-card patterned">
+            {r.shop_tag && <span class="feature-card__tag">{r.shop_tag}</span>}
+            <h3 class="feature-card__title">{r.shop_name}</h3>
+            {r.shop_text && <p class="feature-card__text">{r.shop_text}</p>}
+            {r.shop_address && <address class="feature-card__address">{r.shop_address}</address>}
+            <div class="feature-card__actions">
+              {r.shop_phone && <a class="button button--small button--gold" href={tel(r.shop_phone)}>Call {r.shop_phone}</a>}
+              {r.shop_link_url && <a class="button button--small button--outline" href={r.shop_link_url} target="_blank" rel="noopener">{r.shop_link_label || "Website"} <span aria-hidden="true">↗</span></a>}
+            </div>
+          </article>
+        )}
+        {suppliers.length > 0 && (
+          <ul class="link-list">
+            {suppliers.map((l) => (
+              <li><a class="link-row" href={l.data.url} target="_blank" rel="noopener">
+                <span class="link-row__name">{l.data.title} {l.data.meta && <span class="link-row__meta">{l.data.meta}</span>}</span>
+                <span class="link-row__url">{domain(l.data.url)} <span class="external" aria-hidden="true">↗</span></span></a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Brewing resources -->
+  {reading.length > 0 && (
+    <section class="section" id="reading">
+      <div class="section__inner split">
+        <div class="split__intro">
+          <h2 class="section__title">{r.reading_title}</h2>
+          {r.reading_text && <p class="section__text">{r.reading_text}</p>}
+        </div>
+        <ul class="split__body link-list">
+          {reading.map((l) => (
+            <li><a class="link-row" href={l.data.url} target="_blank" rel="noopener">
+              <span class="link-row__name">{l.data.title} {l.data.meta && <span class="link-row__meta">{l.data.meta}</span>}</span>
+              <span class="link-row__url">{domain(l.data.url)} <span class="external" aria-hidden="true">↗</span></span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- Regional breweries -->
+  {(breweriesND.length + breweriesMN.length) > 0 && (
+    <section class="section" id="breweries">
+      <div class="section__inner">
+        <div class="brewery-intro">
+          <h2 class="section__title">{r.breweries_title}</h2>
+          {r.breweries_text && <p class="section__text">{r.breweries_text}</p>}
+        </div>
+        <div class="brewery-grid">
+          {[
+            { id: "nd-title", label: "North Dakota", cls: "brewery-card--light", list: breweriesND },
+            { id: "mn-title", label: "Minnesota", cls: "brewery-card--gold", list: breweriesMN },
+          ].filter((g) => g.list.length > 0).map((g) => (
+            <section class={`brewery-card ${g.cls}`} aria-labelledby={g.id}>
+              <h3 class="brewery-card__title" id={g.id}>{g.label}</h3>
+              <ul class="brewery-list">
+                {g.list.map((b) => (
+                  <li><a class="brewery-row" href={b.data.url} target="_blank" rel="noopener"><span><span class="brewery-row__name">{b.data.title}</span>{b.data.meta && <span class="brewery-row__town">{b.data.meta}</span>}</span><span class="external" aria-hidden="true">↗</span></a></li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- PHC events (next event from Admin > Events) -->
+  <section class="section section--last" id="phc-events">
+    <div class="section__inner">
+      <div class="event patterned">
+        <div class="event__content">
+          <p class="eyebrow">{r.events_eyebrow || "PHC events"}</p>
+          {next ? (
+            <Fragment>
+              <h2 class="event__title">{next.data.title}</h2>
+              <address class="event__details">
+                <time datetime={new Date(next.data.event_date).toISOString()}>{fmt(next.data.event_date, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}{next.data.time_label && ` at ${next.data.time_label}`}</time>
+                {next.data.location && <Fragment><br>{next.data.location}</Fragment>}
+                {next.data.summary && <Fragment><br>{next.data.summary}</Fragment>}
+              </address>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <h2 class="event__title">New events are on the way</h2>
+              <p class="event__details">Follow us on Facebook to hear about the next one.</p>
+            </Fragment>
+          )}
+          <div class="event__actions">
+            <a class="button button--gold" href={next?.data.details_url || "/events"}>{next ? "Event details" : "All events"} <span class="button__arrow" aria-hidden="true">→</span></a>
+            {r.facebook_url && <a class="button button--outline" href={r.facebook_url} target="_blank" rel="noopener">PHC events on Facebook <span aria-hidden="true">↗</span></a>}
+          </div>
+        </div>
+        {next && (
+          <div class="date-tile" aria-hidden="true">
+            <span class="date-tile__weekday">{fmt(next.data.event_date, { weekday: "long" })}</span>
+            <span class="date-tile__day">{fmt(next.data.event_date, { day: "numeric" })}</span>
+            <span class="date-tile__month">{fmt(next.data.event_date, { month: "long" })}</span>
+            {next.data.time_label && <span class="date-tile__time">{next.data.time_label}</span>}
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  .hero, .section, .section * , .hero * { box-sizing: border-box; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2, h3 { font-family: "Montserrat", system-ui, sans-serif; font-weight: 700; }
+
+  .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #BF9D5E; }
+
+  .patterned { position: relative; overflow: hidden; }
+  .patterned::before { content: ""; position: absolute; inset: 0; background: url("/images/pattern-line.png") center / cover no-repeat; pointer-events: none; }
+  .patterned > * { position: relative; }
+
+  .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 30px; border-radius: 999px; font-size: 18px; font-weight: 700; transition: transform .15s ease, box-shadow .15s ease; }
+  .button:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 rgba(10, 30, 25, .55); }
+  .button--small { min-height: 48px; padding: 0 24px; font-size: 17px; gap: 8px; }
+  .button--gold { background: #BF9D5E; color: #183D34; }
+  .button--outline { border: 2px solid #F4EEDD; }
+  .button__arrow { display: inline-block; transition: transform .15s ease; }
+  .button:hover .button__arrow { transform: translateX(4px); }
+
+  .chip { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1.5px solid rgba(244, 238, 221, .55); border-radius: 999px; font-size: 15px; font-weight: 600; transition: background .15s, color .15s; }
+  .chip:hover { background: #F4EEDD; color: #183D34; }
+
+  .hero { position: relative; padding: clamp(48px, 7vw, 88px) 24px clamp(56px, 7vw, 88px); background: #183D34; color: #F4EEDD; }
+  .hero__band { position: absolute; inset: 0; display: flex; align-items: center; pointer-events: none; }
+  .hero__band::before { content: ""; width: 100%; max-width: 1530px; height: 541px; margin: 0 auto; background: url("/images/pattern-line.png") center / auto 541px no-repeat; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%); }
+  .hero__inner { position: relative; display: flex; flex-direction: column; gap: 28px; max-width: 1200px; margin: 0 auto; }
+  .hero__title { max-width: 820px; font-size: clamp(34px, 4.6vw, 58px); line-height: 1.06; letter-spacing: -0.03em; text-wrap: balance; }
+  .hero__lead { max-width: 600px; font-size: 20px; color: #D5E0D8; text-wrap: pretty; }
+  .hero__nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+
+  .section { padding: clamp(56px, 7vw, 88px) 24px 0; }
+  .section--last { padding-bottom: 104px; }
+  .section__inner { max-width: 1200px; margin: 0 auto; }
+  .split { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 28px 64px; }
+  .split__intro { display: flex; flex: 1 1 260px; flex-direction: column; gap: 12px; max-width: 340px; }
+  .split__body { flex: 3 1 480px; min-width: 0; }
+  .split__body--stack { display: flex; flex-direction: column; gap: 28px; }
+  .section__title { font-size: clamp(28px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.025em; }
+  .section__text { font-size: 17px; color: #34493F; text-wrap: pretty; }
+
+  .link-list { border-bottom: 2px solid #183D34; }
+  .link-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; min-height: 44px; padding: 18px 12px; border-top: 2px solid #183D34; transition: background .15s; }
+  .link-row:hover { background: rgba(24, 61, 53, .07); }
+  .link-row__name { font-family: "Montserrat", system-ui, sans-serif; font-size: 19px; font-weight: 600; line-height: 1.3; }
+  .link-row__meta { display: block; margin-top: 2px; font-family: "DM Sans", system-ui, sans-serif; font-size: 15px; font-weight: 400; color: #4B5E57; }
+  .link-row__url { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: #4B5E57; }
+  .external { display: inline-block; font-weight: 700; color: #183D34; transition: transform .15s ease; }
+  .link-row:hover .external, .brewery-row:hover .external { transform: translate(2px, -2px); }
+
+  .feature-card { display: flex; flex-direction: column; gap: 18px; padding: clamp(24px, 3vw, 36px); border-radius: 24px; background: #183D34; color: #F4EEDD; }
+  .feature-card__tag { align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: #BF9D5E; color: #183D34; font-family: "Montserrat", system-ui, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .feature-card__title { font-size: clamp(26px, 3vw, 34px); line-height: 1.1; letter-spacing: -0.02em; }
+  .feature-card__text { max-width: 520px; color: #D5E0D8; text-wrap: pretty; }
+  .feature-card__address { font-size: 17px; font-style: normal; }
+  .feature-card__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .brewery-intro { display: flex; flex-direction: column; gap: 12px; max-width: 640px; margin-bottom: 36px; }
+  .brewery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); align-items: start; gap: 20px; }
+  .brewery-card { padding: clamp(24px, 3vw, 36px); border-radius: 24px; }
+  .brewery-card--light { background: #FBF8EF; border: 2px solid #183D34; }
+  .brewery-card--gold { background: #BF9D5E; }
+  .brewery-card__title { margin-bottom: 10px; font-size: 24px; letter-spacing: -0.02em; }
+  .brewery-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 14px 4px; border-top: 1px solid rgba(24, 61, 53, .25); }
+  .brewery-card--gold .brewery-row { border-top-color: rgba(24, 61, 53, .35); }
+  .brewery-list li:first-child .brewery-row { border-top: 0; }
+  .brewery-row:hover .brewery-row__name { text-decoration: underline; text-underline-offset: 3px; }
+  .brewery-row__name { display: block; font-family: "Montserrat", system-ui, sans-serif; font-size: 17px; font-weight: 600; line-height: 1.3; }
+  .brewery-row__town { display: block; margin-top: 2px; font-size: 14px; opacity: .8; }
+
+  .event { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); align-items: center; gap: 40px; padding: clamp(32px, 6vw, 72px); border-radius: 28px; background: #183D34; color: #F4EEDD; }
+  .event__content { display: flex; flex-direction: column; gap: 20px; }
+  .event__title { font-size: clamp(30px, 4vw, 48px); line-height: 1.05; letter-spacing: -0.03em; }
+  .event__details { font-size: 20px; font-style: normal; color: #D5E0D8; text-wrap: pretty; }
+  .event__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+
+  .date-tile { justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; max-width: 280px; padding: 28px 24px; border-radius: 24px; background: #BF9D5E; color: #183D34; font-family: "Montserrat", system-ui, sans-serif; text-align: center; }
+  .date-tile__weekday { font-size: 16px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+  .date-tile__day { font-size: 112px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
+  .date-tile__month { font-size: 22px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .date-tile__time { margin-top: 10px; font-family: "DM Sans", system-ui, sans-serif; font-size: 17px; font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>

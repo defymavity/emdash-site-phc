@@ -1,0 +1,194 @@
+---
+import { getEmDashCollection } from "emdash";
+import { Image } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+
+// Shows the newest published year from Admin > Hoppy Halloween
+const { entries } = await getEmDashCollection("hoppy_halloween", {
+  status: "published",
+  orderBy: { year: "desc" },
+  limit: 1,
+});
+const hh: Record<string, any> = entries[0]?.data ?? {};
+
+// Theme colors (only valid hex codes are used; otherwise the default is kept)
+const hex = (v: unknown, fallback: string) =>
+  typeof v === "string" && /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(v.trim()) ? v.trim() : fallback;
+const theme = [
+  `--hh-green:${hex(hh.color_primary, "#183D34")}`,
+  `--hh-green-deep:${hex(hh.color_primary_deep, "#0F2A23")}`,
+  `--hh-green-soft:${hex(hh.color_primary_soft, "#2A5547")}`,
+  `--hh-gold:${hex(hh.color_accent, "#C9A24A")}`,
+  `--hh-gold-light:${hex(hh.color_accent_light, "#F3E7C4")}`,
+  `--hh-cream:${hex(hh.color_background, "#FBF8F1")}`,
+  `--hh-ink:${hex(hh.color_text, "#1D2B27")}`,
+].join(";");
+
+const keyDates: { label: string; date: string; badge?: string }[] = Array.isArray(hh.key_dates) ? hh.key_dates : [];
+const schedule: { label: string; time: string }[] = Array.isArray(hh.schedule) ? hh.schedule : [];
+const addressLines = String(hh.venue_address ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+const datesHeading = hh.dates_heading || (hh.year ? `Key Dates (${hh.year})` : "Key Dates");
+
+// Optional "next club event" strip from Admin > Events
+let next: any = null;
+if (hh.show_next_event !== false) {
+  const { entries: events } = await getEmDashCollection("events", { status: "published", orderBy: { event_date: "asc" }, limit: 50 });
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  next = events.find((e) => e.data.event_date && new Date(e.data.event_date) >= startOfToday) ?? null;
+}
+const tz = "America/Chicago";
+const longDate = (d: Date) => new Date(d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: tz });
+---
+<Base title={hh.hero_title || "Hoppy Halloween Challenge"} description={hh.intro ? String(hh.intro).slice(0, 155) : undefined}>
+  <div class="hh" style={theme}>
+
+    <div class="hero">
+      {hh.banner && <Image image={hh.banner} alt={hh.banner.alt || `${hh.hero_title ?? "Hoppy Halloween"} banner`} class="hero__img" />}
+      <div class="hero-title">
+        <h1>{hh.hero_title || "Hoppy Halloween Challenge"}</h1>
+        {hh.hero_subtitle && <p>{hh.hero_subtitle}</p>}
+      </div>
+    </div>
+
+    {(hh.intro || hh.button_label) && (
+      <div class="band">
+        <div class="wrap">
+          {hh.intro && <p>{hh.intro}</p>}
+          {hh.button_label && <a class="hh-btn" href={hh.button_url || "#"}>{hh.button_label}</a>}
+          {hh.button_note && <small>{hh.button_note}</small>}
+        </div>
+      </div>
+    )}
+
+    <div class="wrap">
+      {keyDates.length > 0 && (
+        <section class="block" id="dates">
+          <h2>{datesHeading}</h2>
+          <div class="hh-card">
+            <table>
+              {keyDates.map((row) => (
+                <tr><td>{row.label}{row.badge && <span class="open">{row.badge}</span>}</td><td>{row.date}</td></tr>
+              ))}
+            </table>
+          </div>
+        </section>
+      )}
+
+      {(hh.venue_name || schedule.length > 0) && (
+        <section class="block" id="banquet">
+          {hh.banquet_heading && <h2>{hh.banquet_heading}</h2>}
+          <div class="two-col">
+            <div class="hh-card venue">
+              {hh.banquet_date && <p class="date">{hh.banquet_date}</p>}
+              <address>
+                {hh.venue_name && <strong>{hh.venue_name}</strong>}
+                {addressLines.map((line, i) => <Fragment>{line}{i < addressLines.length - 1 && <br>}</Fragment>)}
+              </address>
+            </div>
+            {schedule.length > 0 && (
+              <div class="hh-card">
+                <table>
+                  {schedule.map((row) => <tr><td>{row.label}</td><td>{row.time}</td></tr>)}
+                </table>
+              </div>
+            )}
+          </div>
+          {(hh.banquet_note || hh.banquet_note_link_label) && (
+            <p class="note">{hh.banquet_note} {hh.banquet_note_link_label && <a href={hh.banquet_note_link_url || "#"}>{hh.banquet_note_link_label}</a>}</p>
+          )}
+          {hh.callout_text && (
+            <div class="callout">
+              <p>{hh.callout_text} {hh.callout_link_label && <a href={hh.callout_link_url || "#"} target="_blank" rel="noopener">{hh.callout_link_label}</a>}</p>
+            </div>
+          )}
+        </section>
+      )}
+
+      {hh.questions_heading && (
+        <section class="questions" id="questions">
+          <h2>{hh.questions_heading}</h2>
+          {(hh.questions_text || hh.questions_link_label) && (
+            <p>{hh.questions_text} {hh.questions_link_label && <a href={hh.questions_link_url || "#"}>{hh.questions_link_label}</a>}.</p>
+          )}
+          {(hh.history_text || hh.history_link_label) && (
+            <p class="history">{hh.history_text} {hh.history_link_label && <a href={hh.history_link_url || "#"} target="_blank" rel="noopener">{hh.history_link_label}</a>}.</p>
+          )}
+        </section>
+      )}
+    </div>
+
+    {next && (
+      <div class="next">
+        <div class="wrap">
+          <h3>Next club event</h3>
+          <p>
+            <a href={next.data.details_url || "/events"}>{next.data.title}: {longDate(next.data.event_date)}{next.data.time_label && ` @ ${next.data.time_label}`}</a>
+            {next.data.location && <Fragment> · {next.data.location}</Fragment>}
+          </p>
+        </div>
+      </div>
+    )}
+
+  </div>
+</Base>
+
+<style>
+  .hh { background: var(--hh-cream); color: var(--hh-ink); font-size: 18px; line-height: 1.65; padding-bottom: 0; }
+  .hh * { box-sizing: border-box; }
+  .hh h1, .hh h2, .hh h3 { font-family: "Montserrat", system-ui, sans-serif; line-height: 1.2; margin: 0 0 .6em; }
+  .hh a { color: var(--hh-green-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .hh a:hover { color: var(--hh-green); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  .hero { background: var(--hh-green-deep); text-align: center; }
+  .hero :global(.hero__img) { display: block; width: 100%; max-width: 1200px; height: auto; margin: 0 auto; }
+  .hero-title { background: var(--hh-green-deep); color: #fff; padding: 36px 24px 44px; }
+  .hero-title h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; margin: 0 0 .25em; }
+  .hero-title p { margin: 0; color: var(--hh-gold); font-family: "Montserrat", sans-serif; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: .9rem; }
+
+  .band { background: var(--hh-gold-light); border-top: 4px solid var(--hh-gold); border-bottom: 1px solid color-mix(in srgb, var(--hh-gold) 30%, transparent); }
+  .band .wrap { padding-top: 44px; padding-bottom: 44px; max-width: 820px; text-align: center; }
+  .band p { margin: 0 0 1.2em; font-size: 1.15rem; }
+  .band small { display: block; margin-top: 12px; color: color-mix(in srgb, var(--hh-ink) 70%, transparent); font-size: .9rem; }
+  .hh .hh-btn { display: inline-block; background: var(--hh-green); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: .95rem; border-bottom: 3px solid var(--hh-gold); transition: transform .15s, background .15s; }
+  .hh .hh-btn:hover { background: var(--hh-green-soft); color: #fff; transform: translateY(-1px); }
+
+  .block { padding: 64px 0 8px; }
+  .block h2 { color: var(--hh-green); font-size: 1.7rem; display: flex; align-items: center; gap: 14px; }
+  .block h2::after { content: ""; flex: 1; height: 2px; background: color-mix(in srgb, var(--hh-gold) 30%, transparent); }
+
+  .hh-card { background: #fff; border: 1px solid color-mix(in srgb, var(--hh-gold) 30%, transparent); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(24, 61, 52, .05); }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 16px 22px; border-bottom: 1px solid color-mix(in srgb, var(--hh-gold) 25%, transparent); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td:last-child { text-align: right; font-family: "Montserrat", sans-serif; font-weight: 600; font-size: .95rem; color: var(--hh-green); white-space: nowrap; }
+  tr:nth-child(even) td { background: color-mix(in srgb, var(--hh-gold-light) 25%, #fff); }
+  .open { display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 99px; background: var(--hh-gold); color: var(--hh-green-deep); font-size: .72rem; font-weight: 700; font-family: "Montserrat", sans-serif; vertical-align: middle; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; align-items: start; }
+  .venue { padding: 26px; border-left: 5px solid var(--hh-gold); }
+  .venue .date { font-family: "Montserrat", sans-serif; font-weight: 700; color: var(--hh-green); font-size: 1.1rem; margin: 0 0 .5em; }
+  .venue address { font-style: normal; }
+  .venue address strong { display: block; }
+  .note { color: color-mix(in srgb, var(--hh-ink) 70%, transparent); font-size: .95rem; margin-top: 14px; }
+
+  .callout { margin-top: 28px; padding: 22px 26px; border-radius: 10px; background: var(--hh-green); color: #fff; }
+  .hh .callout a { color: var(--hh-gold); font-weight: 600; }
+  .callout p { margin: 0; }
+
+  .questions { text-align: center; padding: 64px 0 24px; }
+  .questions p { margin: 0 0 .6em; }
+  .history { color: color-mix(in srgb, var(--hh-ink) 70%, transparent); font-style: italic; font-size: .95rem; margin-top: 20px; }
+
+  .next { margin: 48px 0 0; padding: 40px 0; background: var(--hh-gold-light); border-top: 1px solid color-mix(in srgb, var(--hh-gold) 30%, transparent); }
+  .next h3 { color: var(--hh-green); margin-bottom: .2em; }
+  .next p { margin: 0; }
+
+  @media (max-width: 760px) {
+    .hh { font-size: 17px; }
+    .two-col { grid-template-columns: 1fr; }
+    td { padding: 14px 16px; }
+    td:last-child { white-space: normal; }
+  }
+</style>
